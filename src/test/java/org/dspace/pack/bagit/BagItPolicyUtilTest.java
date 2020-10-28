@@ -50,7 +50,7 @@ import org.junit.Test;
  *
  * Note: These tests do not run over Managed Groups because they make calls to
  * {@link org.dspace.content.packager.PackageUtils} which has a myriad of static initializers. In order to support that
- * we need to add all Services to the {@link org.dspace.TestContentServiceFactory} as well as implementing
+ * we need to add all Services to the
  * {@link ContentServiceFactory#getDSpaceObjectLegacySupportServices()}.
  *
  * @author mikejritter
@@ -61,7 +61,7 @@ public class BagItPolicyUtilTest extends BagItPackerTest {
 
     @Before
     public void setup() throws SQLException {
-        super.setup();
+        // super.setup();
 
         try {
             community = initDSO(Community.class);

@@ -67,7 +67,7 @@ public class BagItAipWriterTest extends BagItPackerTest {
 
     @Before
     public void setup() throws SQLException {
-        super.setup();
+        // super.setup();
         final String objectTypeLine = PackerFactory.OBJECT_TYPE + objectType;
         properties = ImmutableMap.of(PackerFactory.OBJFILE, Collections.singletonList(objectTypeLine));
         metadata = new Metadata();

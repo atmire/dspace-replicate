@@ -93,7 +93,7 @@ public class ItemPackerTest extends BagItPackerTest {
 
     @Before
     public void setup() throws SQLException {
-        super.setup();
+        // super.setup();
 
         try {
             // Create some metadata for the item

@@ -8,23 +8,14 @@
 package org.dspace.pack.bagit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.dspace.TestContentServiceFactory.CONTENT_SERVICE_FACTORY;
-import static org.dspace.TestDSpaceServicesFactory.DSPACE_SERVICES_FACTORY;
 import static org.duraspace.bagit.BagConfig.SOURCE_ORGANIZATION_KEY;
 
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import org.dspace.TestConfigurationService;
-import org.dspace.TestContentServiceFactory;
-import org.dspace.TestDSpaceKernelImpl;
-import org.dspace.TestDSpaceServicesFactory;
-import org.dspace.TestServiceManager;
-import org.dspace.kernel.DSpaceKernel;
-import org.dspace.kernel.DSpaceKernelManager;
-import org.dspace.kernel.ServiceManager;
+import org.dspace.AbstractDSpaceTest;
 import org.dspace.services.ConfigurationService;
-import org.junit.Before;
+import org.dspace.services.factory.DSpaceServicesFactory;
 import org.junit.Test;
 
 /**
@@ -32,7 +23,7 @@ import org.junit.Test;
  *
  * @author mikejritter
  */
-public class BagInfoHelperTest {
+public class BagInfoHelperTest extends AbstractDSpaceTest  {
 
     private static final String ARCH_FMT = "zip";
     private static final String ARCH_FMT_KEY = "replicate.packer.archfmt";
@@ -46,6 +37,7 @@ public class BagInfoHelperTest {
 
     private ConfigurationService configurationService;
 
+    /*
     @Before
     public void setup() {
         final ServiceManager serviceManager = new TestServiceManager();
@@ -62,9 +54,11 @@ public class BagInfoHelperTest {
         DSpaceKernelManager.registerMBean(kernel.getMBeanName(), kernel);
         DSpaceKernelManager.setDefaultKernel(kernel);
     }
+     */
 
     @Test
     public void getTagFiles() {
+        configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
         final Map<String, Map<String, String>> tagFiles = BagInfoHelper.getTagFiles();
 
         assertThat(tagFiles).hasSize(2);
@@ -75,6 +69,7 @@ public class BagInfoHelperTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void invalidKeyLength() {
+        configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
         final String key = "replicate-bagit.tag.test.test-info.invalid-key";
 
         configurationService.setProperty(key, "");

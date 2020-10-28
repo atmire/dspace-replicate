@@ -35,7 +35,7 @@ import static org.junit.Assert.fail;
  *
  * @author Tim
  * @see AbstractUnitTest
- * @see AbstractIntegrationTest
+ * @see
  */
 @Ignore
 @RunWith(MockitoJUnitRunner.class)
