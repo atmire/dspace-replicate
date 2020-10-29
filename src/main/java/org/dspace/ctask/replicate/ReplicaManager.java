@@ -123,6 +123,16 @@ public class ReplicaManager {
     {
         // canonical handle notation bedevils file system semantics
         String storageId = objId.replaceAll("/", "-");
+        if (configurationService.getBooleanProperty("replicate.packer.uuid", false)) {
+            try {
+                //Get object associated with this handle
+                DSpaceObject dso = handleService.resolveToObject(Curator.curationContext(), objId);
+
+                if(dso!=null) {
+                    storageId = dso.getID().toString();
+                }
+            } catch(SQLException ignore) {}
+        }
         
         // add appropriate file extension, if needed
         if(fileExtension!=null && !storageId.endsWith("." + fileExtension))

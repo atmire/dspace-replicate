@@ -11,9 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.content.DSpaceObject;
@@ -180,7 +180,7 @@ public class METSRestoreFromAIP extends AbstractPackagerTask
             // This only restores/replaces a single object.
             packer.unpack(archive, pkgParams);
 
-            DSpaceObject archiveObj = handleService.resolveToObject(Curator.curationContext(), resolveHandle(archiveName));
+            DSpaceObject archiveObj = resolveArchiveObject(archive);
 
             // Remove the locally cached archive file - it is no longer needed.
             if(archive.exists())
@@ -226,7 +226,7 @@ public class METSRestoreFromAIP extends AbstractPackagerTask
                             if (relArchive != null) {
                                 //recurse to restore/replace this child object (and all its children)
                                 restoreObject(repMan, relArchive, pkgParams);
-                                DSpaceObject relObj = handleService.resolveToObject(Curator.curationContext(), resolveHandle(relRef));
+                                DSpaceObject relObj = resolveArchiveObject(relArchive);
                                 int leftPlace = relationshipService.findNextLeftPlaceByLeftItem(Curator.curationContext(), (Item) archiveObj);
                                 int rightPlace = relationshipService.findNextRightPlaceByRightItem(Curator.curationContext(), (Item) relObj);
                                 relationshipService.create(Curator.curationContext(), (Item) archiveObj, (Item) relObj, type, leftPlace, rightPlace);
@@ -248,12 +248,18 @@ public class METSRestoreFromAIP extends AbstractPackagerTask
         }
     }
 
-    private String resolveHandle(String archiveName) {
-        String handle = archiveName.replace("ITEM@", "").replace(".zip", "");
-        char[] charArray = handle.toCharArray();
-        charArray[handle.lastIndexOf("-")] = '/';
-        handle = String.valueOf(charArray);
-        return handle;
+    private DSpaceObject resolveArchiveObject(File archive) throws SQLException {
+        String id = archive.getName().replace("ITEM@", "").replace(".zip", "");
+        if (configurationService.getBooleanProperty("replicate.packer.uuid", false)) {
+            return itemService.find(Curator.curationContext(), UUID.fromString(id));
+        } else {
+            String handle = id;
+            char[] charArray = handle.toCharArray();
+            charArray[handle.lastIndexOf("-")] = '/';
+            handle = String.valueOf(charArray);
+            return handleService.resolveToObject(Curator.curationContext(), handle);
+        }
+
     }
     
     
