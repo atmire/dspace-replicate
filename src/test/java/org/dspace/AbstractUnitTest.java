@@ -7,6 +7,7 @@
  */
 package org.dspace;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -16,6 +17,7 @@ import org.dspace.authorize.factory.AuthorizeServiceFactory;
 import org.dspace.authorize.service.AuthorizeService;
 import org.dspace.core.Context;
 import org.dspace.core.I18nUtil;
+import org.dspace.curate.Curator;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.factory.EPersonServiceFactory;
 import org.dspace.eperson.service.EPersonService;
@@ -99,6 +101,12 @@ public class AbstractUnitTest extends AbstractDSpaceTest {
             context = new Context(Context.Mode.BATCH_EDIT);
             context.turnOffAuthorisationSystem();
 
+            // Not ideal but we have static access in our classes so we need to update the static Context
+            Field ctxField = Curator.class.getDeclaredField("curationCtx");
+            ctxField.setAccessible(true);
+            ThreadLocal<Context> ctxHolder = (ThreadLocal<Context>) ctxField.get(null);
+            ctxHolder.set(context);
+
             //Find our global test EPerson account. If it doesn't exist, create it.
             EPersonService ePersonService = EPersonServiceFactory.getInstance().getEPersonService();
             eperson = ePersonService.findByEmail(context, "test@email.com");
@@ -124,13 +132,15 @@ public class AbstractUnitTest extends AbstractDSpaceTest {
 
             // Ensure all tests run with Solr indexing disabled
             disableSolrIndexing();
-
         } catch (AuthorizeException ex) {
             log.error("Error creating initial eperson or default groups", ex);
             fail("Error creating initial eperson or default groups in AbstractUnitTest init()");
         } catch (SQLException ex) {
             log.error(ex.getMessage(), ex);
             fail("SQL Error on AbstractUnitTest init()");
+        } catch (NoSuchFieldException | IllegalAccessException ex) {
+            log.error("Unable to set static Context", ex);
+            fail("Unable to set static Context in AbstractUnitTest init()");
         }
     }
 
