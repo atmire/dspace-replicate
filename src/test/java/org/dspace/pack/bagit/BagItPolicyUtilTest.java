@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.dspace.AbstractDSpaceTest;
+import org.dspace.AbstractUnitTest;
 import org.dspace.authorize.ResourcePolicy;
 import org.dspace.authorize.factory.AuthorizeServiceFactory;
 import org.dspace.authorize.service.ResourcePolicyService;
@@ -47,7 +48,7 @@ import org.junit.Test;
  *
  * @author mikejritter
  */
-public class BagItPolicyUtilTest extends AbstractDSpaceTest {
+public class BagItPolicyUtilTest extends AbstractUnitTest {
 
     final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     final GroupService groupService = EPersonServiceFactory.getInstance().getGroupService();
@@ -194,6 +195,12 @@ public class BagItPolicyUtilTest extends AbstractDSpaceTest {
         final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();;
 
+        // Create the ePerson we need to exist dspace-user@localhost.localdomain
+        final String personEmail = "dspace-user@localhost.localdomain";
+        final EPerson ePerson = ePersonService.create(context);
+        ePerson.setEmail(personEmail);
+        ePersonService.update(context, ePerson);
+
         // Read an aip in order to load a policy.xml
         final URL resources = BagItPolicyUtilTest.class.getClassLoader().getResource("");
         assertThat(resources).isNotNull();
@@ -204,24 +211,10 @@ public class BagItPolicyUtilTest extends AbstractDSpaceTest {
         final Policies policy = reader.readPolicy();
         assertThat(policy).isNotNull();
 
-        // Create each of the expected groups and an ePerson: Admin, Anonymous, GROUP, dspace-user@localhost.localdomain
-        // final String personEmail = "dspace-user@localhost.localdomain";
-
-        // Set up expected interactions with our mocks
-        // when(resourcePolicyService.create(any(Context.class))).thenReturn(initReloadable(ResourcePolicy.class));
-        // when(groupService.findByName(any(Context.class), eq(Group.ADMIN))).thenReturn(group);
-        // when(groupService.findByName(any(Context.class), eq(Group.ANONYMOUS))).thenReturn(group);
-        // when(ePersonService.findByEmail(any(Context.class), eq(personEmail))).thenReturn(ePerson);
-
         // Register the policy on a DSpaceObject
         BagItPolicyUtil.registerPolicies(community, policy);
 
         final List<ResourcePolicy> policies = policyService.find(context, community);
         assertThat(policies).hasSize(8);
-
-        // verify service interactions
-        // verify(resourcePolicyService, times(8)).create(any(Context.class));
-        // verify(groupService, times(4)).findByName(any(Context.class), matches(Group.ADMIN + "|" + Group.ANONYMOUS));
-        // verify(ePersonService, times(4)).findByEmail(any(Context.class), eq(personEmail));
     }
 }
