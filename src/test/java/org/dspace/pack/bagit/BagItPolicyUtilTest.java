@@ -17,7 +17,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.dspace.AbstractDSpaceTest;
 import org.dspace.AbstractUnitTest;
 import org.dspace.authorize.ResourcePolicy;
 import org.dspace.authorize.factory.AuthorizeServiceFactory;
@@ -25,8 +24,6 @@ import org.dspace.authorize.service.ResourcePolicyService;
 import org.dspace.content.Community;
 import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.content.service.CommunityService;
-import org.dspace.core.Context;
-import org.dspace.curate.Curator;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.Group;
 import org.dspace.eperson.factory.EPersonServiceFactory;
@@ -35,7 +32,6 @@ import org.dspace.eperson.service.GroupService;
 import org.dspace.pack.bagit.xml.policy.Policies;
 import org.dspace.pack.bagit.xml.policy.Policy;
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -55,26 +51,12 @@ public class BagItPolicyUtilTest extends AbstractUnitTest {
     final EPersonService ePersonService = EPersonServiceFactory.getInstance().getEPersonService();
     final ResourcePolicyService policyService = AuthorizeServiceFactory.getInstance().getResourcePolicyService();
 
-    private EPerson ePerson;
-    private Community community;
-
-    @Before
-    public void setup() throws Exception {
-        final Context context = Curator.curationContext();
-        context.turnOffAuthorisationSystem();;
-
-        ePerson = ePersonService.create(context);
-        ePerson.setEmail("bagit-policy-util-test");
-        ePersonService.update(context, ePerson);
-
-        final CommunityService communityService = ContentServiceFactory.getInstance().getCommunityService();
-        community = communityService.create(null, context);
-    }
-
     @Test
     public void getPolicyForAdmin() throws Exception {
-        final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();
+
+        final CommunityService communityService = ContentServiceFactory.getInstance().getCommunityService();
+        Community community = communityService.create(null, context);
 
         // Setup group
         final Group adminGroup = groupService.findByName(context, Group.ADMIN);
@@ -108,14 +90,17 @@ public class BagItPolicyUtilTest extends AbstractUnitTest {
         assertThat(child.getEndDate()).isNull();
         assertThat(child.getEperson()).isNull();
         assertThat(child.getDescription()).isNull();
+        context.restoreAuthSystemState();
     }
 
     @Test
     public void getPolicyForAnonymous() throws Exception {
-        final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();
 
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        final CommunityService communityService = ContentServiceFactory.getInstance().getCommunityService();
+        Community community = communityService.create(null, context);
 
         // setup the Group
         final Group anonGroup = groupService.findByName(context, Group.ANONYMOUS);
@@ -148,17 +133,23 @@ public class BagItPolicyUtilTest extends AbstractUnitTest {
         assertThat(child.getEperson()).isNull();
         assertThat(child.getStartDate()).isNull();
         assertThat(child.getDescription()).isNull();
+        context.restoreAuthSystemState();
     }
 
     @Test
     public void getPolicyForEPerson() throws Exception {
-        final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();
 
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+        final CommunityService communityService = ContentServiceFactory.getInstance().getCommunityService();
+        Community community = communityService.create(null, context);
+
         // setup the EPerson
         final String epersonEmail = "bagit-policy-util-test";
+        final EPerson ePerson = ePersonService.create(context);
+        ePerson.setEmail(epersonEmail);
+        ePersonService.update(context, ePerson);
 
         // Create the ePerson policy
         final DateTime ePersonDateTime = DateTime.now().plusDays(1);
@@ -188,12 +179,15 @@ public class BagItPolicyUtilTest extends AbstractUnitTest {
         assertThat(child.getGroup()).isNull();
         assertThat(child.getEndDate()).isNull();
         assertThat(child.getDescription()).isNull();
+        context.restoreAuthSystemState();
     }
 
     @Test
     public void registerPolicies() throws Exception {
-        final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();;
+
+        final CommunityService communityService = ContentServiceFactory.getInstance().getCommunityService();
+        Community community = communityService.create(null, context);
 
         // Create the ePerson we need to exist dspace-user@localhost.localdomain
         final String personEmail = "dspace-user@localhost.localdomain";
@@ -216,5 +210,6 @@ public class BagItPolicyUtilTest extends AbstractUnitTest {
 
         final List<ResourcePolicy> policies = policyService.find(context, community);
         assertThat(policies).hasSize(8);
+        context.restoreAuthSystemState();
     }
 }

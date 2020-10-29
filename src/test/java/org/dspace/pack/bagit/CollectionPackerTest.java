@@ -23,7 +23,6 @@ import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.content.service.CollectionService;
 import org.dspace.content.service.CommunityService;
 import org.dspace.core.Context;
-import org.dspace.curate.Curator;
 import org.junit.Test;
 
 /**
@@ -41,7 +40,6 @@ public class CollectionPackerTest extends AbstractUnitTest {
 
     @Test
     public void testPack() throws Exception {
-        final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();
 
         // get the output location
@@ -68,7 +66,6 @@ public class CollectionPackerTest extends AbstractUnitTest {
 
     @Test
     public void testUnpack() throws Exception {
-        final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();
         // push to setup
         final URL resources = CollectionPackerTest.class.getClassLoader().getResource("unpack");

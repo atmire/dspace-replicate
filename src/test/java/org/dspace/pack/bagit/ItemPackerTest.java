@@ -31,11 +31,9 @@ import org.dspace.content.service.InstallItemService;
 import org.dspace.content.service.ItemService;
 import org.dspace.content.service.WorkspaceItemService;
 import org.dspace.core.Context;
-import org.dspace.curate.Curator;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.factory.EPersonServiceFactory;
 import org.dspace.eperson.service.EPersonService;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -52,25 +50,14 @@ public class ItemPackerTest extends AbstractUnitTest {
     private CollectionService collectionService = ContentServiceFactory.getInstance().getCollectionService();
     private WorkspaceItemService workspaceItemService = ContentServiceFactory.getInstance().getWorkspaceItemService();
     private InstallItemService installItemService = ContentServiceFactory.getInstance().getInstallItemService();
-
-    private EPerson ePerson;
-
-    @Before
-    public void setup() throws Exception {
-        super.init();
-        final EPersonService ePersonService = EPersonServiceFactory.getInstance().getEPersonService();
-        final Context context = Curator.curationContext();
-        context.turnOffAuthorisationSystem();
-
-        ePerson = ePersonService.findByEmail(context, "test@email.com");
-        assertThat(ePerson).isNotNull();
-        context.restoreAuthSystemState();
-    }
+    private EPersonService ePersonService = EPersonServiceFactory.getInstance().getEPersonService();
 
     @Test
     public void testPack() throws Exception {
-        final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();
+
+        EPerson ePerson = ePersonService.findByEmail(context, "test@email.com");
+        assertThat(ePerson).isNotNull();
         context.setCurrentUser(ePerson);
 
         // setup output
@@ -90,12 +77,15 @@ public class ItemPackerTest extends AbstractUnitTest {
         assertThat(packedOutput).exists();
         assertThat(packedOutput).isFile();
         packedOutput.delete();
+        context.restoreAuthSystemState();
     }
 
     @Test
     public void testFetchThrowsException() throws Exception {
-        final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();
+
+        EPerson ePerson = ePersonService.findByEmail(context, "test@email.com");
+        assertThat(ePerson).isNotNull();
         context.setCurrentUser(ePerson);
 
         // setup output
@@ -118,12 +108,15 @@ public class ItemPackerTest extends AbstractUnitTest {
         }
 
         Files.delete(output.toFile());
+        context.restoreAuthSystemState();
     }
 
     @Test
     public void testUnpack() throws Exception {
-        final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();
+
+        EPerson ePerson = ePersonService.findByEmail(context, "test@email.com");
+        assertThat(ePerson).isNotNull();
         context.setCurrentUser(ePerson);
 
         final URL resources = CollectionPackerTest.class.getClassLoader().getResource("unpack");

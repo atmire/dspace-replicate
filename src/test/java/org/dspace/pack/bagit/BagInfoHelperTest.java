@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableMap;
 import org.dspace.AbstractUnitTest;
 import org.dspace.services.ConfigurationService;
 import org.dspace.services.factory.DSpaceServicesFactory;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -26,25 +25,10 @@ import org.junit.Test;
  */
 public class BagInfoHelperTest extends AbstractUnitTest {
 
-    private static final String ARCH_FMT = "zip";
-    private static final String ARCH_FMT_KEY = "replicate.packer.archfmt";
-    private static final String SOURCE_ORG = "org.dspace.dspace-replicate";
-    private static final String SOURCE_ORG_CONFIG_KEY = "replicate-bagit.tag.bag-info.source-organization";
-    private static final String OTHER_INFO_MISC = "bag-info-helper-test";
-    private static final String OTHER_INFO_MISC_CONFIG_KEY = "replicate-bagit.tag.other-info.misc";
-
     private static final String BAG_INFO = "bag-info.txt";
     private static final String OTHER_INFO = "other-info.txt";
 
     private ConfigurationService configurationService;
-
-    @Before
-    public void setup() {
-        configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
-        configurationService.setProperty(ARCH_FMT_KEY, ARCH_FMT);
-        configurationService.setProperty(SOURCE_ORG_CONFIG_KEY, SOURCE_ORG);
-        configurationService.setProperty(OTHER_INFO_MISC_CONFIG_KEY, OTHER_INFO_MISC);
-    }
 
     @Test
     public void getTagFiles() {
@@ -63,7 +47,6 @@ public class BagInfoHelperTest extends AbstractUnitTest {
         final String key = "replicate-bagit.tag.test.test-info.invalid-key";
 
         configurationService.setProperty(key, "");
-
         BagInfoHelper.getTagFiles();
     }
 }

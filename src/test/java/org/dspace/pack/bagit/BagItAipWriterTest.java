@@ -10,6 +10,7 @@ package org.dspace.pack.bagit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -37,8 +38,6 @@ import org.dspace.pack.bagit.xml.metadata.Metadata;
 import org.dspace.pack.bagit.xml.metadata.Value;
 import org.dspace.pack.bagit.xml.policy.Policies;
 import org.dspace.pack.bagit.xml.policy.Policy;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -47,7 +46,7 @@ import org.junit.Test;
  */
 public class BagItAipWriterTest extends AbstractUnitTest {
 
-    private final String archFmt = "zip";
+    // private final String archFmt = "zip";
     private final String objectType = "test-bag";
     private final String bundleName = "test-bundle";
     private final String xmlBody = "test-xml-body";
@@ -60,7 +59,6 @@ public class BagItAipWriterTest extends AbstractUnitTest {
 
     private BitstreamService bitstreamService;
 
-    @Before
     public void setup() {
         final String objectTypeLine = PackerFactory.OBJECT_TYPE + objectType;
         properties = ImmutableMap.of(PackerFactory.OBJFILE, Collections.singletonList(objectTypeLine));
@@ -76,29 +74,20 @@ public class BagItAipWriterTest extends AbstractUnitTest {
         bitstreamService = ContentServiceFactory.getInstance().getBitstreamService();
     }
 
-    @After
-    public void clean() throws Exception {
-        final String bagName = "test-write-aip.zip";
-        final URL resources = this.getClass().getClassLoader().getResource("");
-        final Path root = Paths.get(Objects.requireNonNull(resources).toURI());
-        final Path createdBag = root.resolve(bagName);
-        if (Files.exists(createdBag)) {
-            Files.delete(createdBag);
-        }
-    }
-
     @Test
     public void testWriteAip() throws Exception {
+        setup();
         final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();
         final String bagName = "test-write-aip";
         final URL resources = this.getClass().getClassLoader().getResource("");
         final Path root = Paths.get(Objects.requireNonNull(resources).toURI());
         final File directory = root.resolve(bagName).toFile();
-        final Bitstream logo = bitstreamService.create(context, Files.newInputStream(root.resolve("existing-bagit-aip/data/policy.xml")));
+        final File testBitstream = new File(testProps.getProperty("test.bitstream"));
+        final Bitstream logo = bitstreamService.create(context, new FileInputStream(testBitstream));
         bitstreams.add(new BagBitstream(logo, bundleName, null, null));
 
-        final BagItAipWriter writer = new BagItAipWriter(directory, archFmt, properties)
+        final BagItAipWriter writer = new BagItAipWriter(directory, ARCH_FMT, properties)
             .withLogo(logo)
             .withMetadata(metadata)
             .withPolicies(policies)
@@ -131,11 +120,14 @@ public class BagItAipWriterTest extends AbstractUnitTest {
         final List<String> manifestLines = contents.get(manifestKey);
         final List<String> tagManifestLines = contents.get(tagManifestKey);
         assertThat(manifestLines).hasSize(5);
-        assertThat(tagManifestLines).hasSize(3);
+        assertThat(tagManifestLines).hasSize(4);
+
+        Files.delete(packagedAip.toPath());
     }
 
     @Test(expected = IllegalStateException.class)
     public void testWriteAipExists() throws Exception {
+        setup();
         final String bagName = "existing-bagit-aip";
         final URL resources = this.getClass().getClassLoader().getResource("");
         final Path root = Paths.get(Objects.requireNonNull(resources).toURI());
@@ -143,7 +135,7 @@ public class BagItAipWriterTest extends AbstractUnitTest {
         final Bitstream logo = null;
         final File directory = root.resolve(bagName).toFile();
 
-        final BagItAipWriter writer = new BagItAipWriter(directory, archFmt, properties)
+        final BagItAipWriter writer = new BagItAipWriter(directory, ARCH_FMT, properties)
             .withLogo(logo)
             .withMetadata(metadata)
             .withBitstreams(bitstreams);

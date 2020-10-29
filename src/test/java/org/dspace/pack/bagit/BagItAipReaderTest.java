@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.dspace.AbstractUnitTest;
-import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -80,11 +79,6 @@ public class BagItAipReaderTest extends AbstractUnitTest {
             // catch the exception so we can clean up the extracted files
         }
         reader.clean();
-    }
-
-    @After
-    public void verifyMocks() {
-        // no mocks to verify for these tests
     }
 
 }

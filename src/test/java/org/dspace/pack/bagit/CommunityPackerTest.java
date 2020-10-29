@@ -20,8 +20,6 @@ import org.dspace.AbstractUnitTest;
 import org.dspace.content.Community;
 import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.content.service.CommunityService;
-import org.dspace.core.Context;
-import org.dspace.curate.Curator;
 import org.junit.Test;
 
 /**
@@ -35,7 +33,6 @@ public class CommunityPackerTest extends AbstractUnitTest {
 
     @Test
     public void testPack() throws Exception {
-        final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();
 
         final URL resources = CollectionPackerTest.class.getClassLoader().getResource("");
@@ -52,11 +49,11 @@ public class CommunityPackerTest extends AbstractUnitTest {
         assertThat(packedOutput).exists();
         assertThat(packedOutput).isFile();
         packedOutput.delete();
+        context.restoreAuthSystemState();
     }
 
     @Test
     public void testUnpack() throws Exception {
-        final Context context = Curator.curationContext();
         context.turnOffAuthorisationSystem();
 
         final URL resources = CollectionPackerTest.class.getClassLoader().getResource("unpack");
@@ -80,6 +77,7 @@ public class CommunityPackerTest extends AbstractUnitTest {
             .isEmpty();
 
         assertThat(openArchive).doesNotExist();
+        context.restoreAuthSystemState();
     }
 
 }
