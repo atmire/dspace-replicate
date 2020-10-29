@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.After;
+import org.dspace.AbstractDSpaceTest;
 import org.junit.Test;
 
 /**
@@ -24,7 +24,7 @@ import org.junit.Test;
  *
  * @author mikejritter
  */
-public class CatalogPackerTest extends BagItPackerTest {
+public class CatalogPackerTest extends AbstractDSpaceTest {
 
     @Test
     public void testPack() throws Exception {
@@ -43,29 +43,19 @@ public class CatalogPackerTest extends BagItPackerTest {
         packedOutput.delete();
     }
 
-    /**
-     * This is not ideal but the unpack test doesn't call any services or use any static initializers, so it overrides
-     * the {@link BagItPackerTest#verifyMocks()} in order to ignore any verifications
-     */
-    public static class Unpack {
-        @After
-        public void verifyMocks() {
-        }
+    @Test
+    public void testUnpack() throws Exception {
+        final URL resources = CollectionPackerTest.class.getClassLoader().getResource("");
+        assertNotNull(resources);
+        final Path archive = Paths.get(resources.toURI().resolve("unpack/catalog.zip"));
+        final Path openArchive = Paths.get(resources.toURI().resolve("unpack/catalog"));
 
-        @Test
-        public void testUnpack() throws Exception {
-            final URL resources = CollectionPackerTest.class.getClassLoader().getResource("");
-            assertNotNull(resources);
-            final Path archive = Paths.get(resources.toURI().resolve("unpack/catalog.zip"));
-            final Path openArchive = Paths.get(resources.toURI().resolve("unpack/catalog"));
+        final CatalogPacker packer = new CatalogPacker("object-id", "owner-id", ImmutableList.of("member"));
+        packer.unpack(archive.toFile());
 
-            final CatalogPacker packer = new CatalogPacker("object-id", "owner-id", ImmutableList.of("member"));
-            packer.unpack(archive.toFile());
-
-            assertThat(openArchive).doesNotExist();
-            assertThat(packer.getMembers()).hasSize(2);
-            assertThat(packer.getMembers()).contains("admin", "test-user");
-            assertThat(packer.getOwnerId()).isEqualTo("123456789/1");
-        }
+        assertThat(openArchive).doesNotExist();
+        assertThat(packer.getMembers()).hasSize(2);
+        assertThat(packer.getMembers()).contains("admin", "test-user");
+        assertThat(packer.getOwnerId()).isEqualTo("123456789/1");
     }
 }

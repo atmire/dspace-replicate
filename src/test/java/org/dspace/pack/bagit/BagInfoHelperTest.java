@@ -13,9 +13,10 @@ import static org.duraspace.bagit.BagConfig.SOURCE_ORGANIZATION_KEY;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import org.dspace.AbstractDSpaceTest;
+import org.dspace.AbstractUnitTest;
 import org.dspace.services.ConfigurationService;
 import org.dspace.services.factory.DSpaceServicesFactory;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -23,7 +24,7 @@ import org.junit.Test;
  *
  * @author mikejritter
  */
-public class BagInfoHelperTest extends AbstractDSpaceTest  {
+public class BagInfoHelperTest extends AbstractUnitTest {
 
     private static final String ARCH_FMT = "zip";
     private static final String ARCH_FMT_KEY = "replicate.packer.archfmt";
@@ -37,24 +38,13 @@ public class BagInfoHelperTest extends AbstractDSpaceTest  {
 
     private ConfigurationService configurationService;
 
-    /*
     @Before
     public void setup() {
-        final ServiceManager serviceManager = new TestServiceManager();
-        configurationService = new TestConfigurationService();
+        configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
         configurationService.setProperty(ARCH_FMT_KEY, ARCH_FMT);
         configurationService.setProperty(SOURCE_ORG_CONFIG_KEY, SOURCE_ORG);
         configurationService.setProperty(OTHER_INFO_MISC_CONFIG_KEY, OTHER_INFO_MISC);
-
-        serviceManager.registerService(ConfigurationService.class.getName(), configurationService);
-        serviceManager.registerService(DSPACE_SERVICES_FACTORY, new TestDSpaceServicesFactory());
-        serviceManager.registerService(CONTENT_SERVICE_FACTORY, new TestContentServiceFactory());
-
-        final DSpaceKernel kernel = new TestDSpaceKernelImpl(serviceManager, configurationService);
-        DSpaceKernelManager.registerMBean(kernel.getMBeanName(), kernel);
-        DSpaceKernelManager.setDefaultKernel(kernel);
     }
-     */
 
     @Test
     public void getTagFiles() {

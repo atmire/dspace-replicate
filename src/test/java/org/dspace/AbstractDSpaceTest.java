@@ -16,6 +16,8 @@ import java.util.TimeZone;
 import org.apache.logging.log4j.Logger;
 import org.dspace.servicemanager.DSpaceKernelImpl;
 import org.dspace.servicemanager.DSpaceKernelInit;
+import org.dspace.services.ConfigurationService;
+import org.dspace.services.factory.DSpaceServicesFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -40,6 +42,11 @@ import static org.junit.Assert.fail;
 @Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class AbstractDSpaceTest {
+
+    private static final String ARCH_FMT = "zip";
+    private static final String ARCH_FMT_KEY = "replicate.packer.archfmt";
+    private static final String SOURCE_ORG = "org.dspace.dspace-replicate";
+    private static final String SOURCE_ORG_CONFIG_KEY = "replicate-bagit.tag.bag-info.source-organization";
 
     /**
      * Default constructor
@@ -88,6 +95,10 @@ public class AbstractDSpaceTest {
                 // For example: by using <systemPropertyVariables> of maven-surefire-plugin or maven-failsafe-plugin
                 kernelImpl.start(getDspaceDir()); // init the kernel
             }
+
+            ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
+            configurationService.setProperty(SOURCE_ORG_CONFIG_KEY, SOURCE_ORG);
+            configurationService.setProperty(ARCH_FMT_KEY, ARCH_FMT);
         } catch (IOException ex) {
             log.error("Error initializing tests", ex);
             fail("Error initializing tests: " + ex.getMessage());

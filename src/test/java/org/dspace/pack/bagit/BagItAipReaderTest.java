@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.dspace.AbstractDSpaceTest;
 import org.junit.After;
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ import org.junit.Test;
  * @author mikejritter
  * @since 2020-03-19
  */
-public class BagItAipReaderTest extends BagItPackerTest {
+public class BagItAipReaderTest extends AbstractDSpaceTest {
 
     @Test(expected = IOException.class)
     public void failIfArchiveIsNull() throws IOException {
