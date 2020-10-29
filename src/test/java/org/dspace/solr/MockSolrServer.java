@@ -12,7 +12,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.core.CoreContainer;
-import org.dspace.AbstractDSpaceIntegrationTest;
+import org.dspace.AbstractDSpaceTest;
 
 public class MockSolrServer {
 
@@ -133,7 +133,7 @@ public class MockSolrServer {
      */
     private static synchronized void initSolrContainer() {
         if (container == null) {
-            String solrDir = AbstractDSpaceIntegrationTest.getDspaceDir() + File.separator + "solr";
+            String solrDir = AbstractDSpaceTest.getDspaceDir() + File.separator + "solr";
             log.info("Initializing SOLR CoreContainer with directory " + solrDir);
             container = new CoreContainer(solrDir);
             container.load();
