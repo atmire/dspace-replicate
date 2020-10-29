@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import org.dspace.AbstractDSpaceTest;
+import org.dspace.AbstractUnitTest;
 import org.dspace.content.Community;
 import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.content.service.CommunityService;
@@ -29,7 +29,7 @@ import org.junit.Test;
  *
  * @author mikejritter
  */
-public class CommunityPackerTest extends AbstractDSpaceTest {
+public class CommunityPackerTest extends AbstractUnitTest {
 
     final CommunityService communityService = ContentServiceFactory.getInstance().getCommunityService();
 

@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.google.common.collect.ImmutableList;
-import org.dspace.AbstractDSpaceTest;
+import org.dspace.AbstractUnitTest;
 import org.junit.Test;
 
 /**
@@ -24,7 +24,7 @@ import org.junit.Test;
  *
  * @author mikejritter
  */
-public class CatalogPackerTest extends AbstractDSpaceTest {
+public class CatalogPackerTest extends AbstractUnitTest {
 
     @Test
     public void testPack() throws Exception {

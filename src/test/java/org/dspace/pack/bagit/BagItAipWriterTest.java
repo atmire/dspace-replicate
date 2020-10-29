@@ -73,7 +73,6 @@ public class BagItAipWriterTest extends AbstractUnitTest {
         policies.addPolicy(policy);
 
         bitstreams = new ArrayList<>();
-
         bitstreamService = ContentServiceFactory.getInstance().getBitstreamService();
     }
 
