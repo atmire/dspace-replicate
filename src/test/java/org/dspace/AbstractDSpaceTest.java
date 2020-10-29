@@ -37,16 +37,17 @@ import static org.junit.Assert.fail;
  *
  * @author Tim
  * @see AbstractUnitTest
- * @see
  */
 @Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class AbstractDSpaceTest {
 
-    private static final String ARCH_FMT = "zip";
-    private static final String ARCH_FMT_KEY = "replicate.packer.archfmt";
-    private static final String SOURCE_ORG = "org.dspace.dspace-replicate";
-    private static final String SOURCE_ORG_CONFIG_KEY = "replicate-bagit.tag.bag-info.source-organization";
+    protected static final String ARCH_FMT = "zip";
+    protected static final String ARCH_FMT_KEY = "replicate.packer.archfmt";
+    protected static final String SOURCE_ORG = "org.dspace.dspace-replicate";
+    protected static final String SOURCE_ORG_CONFIG_KEY = "replicate-bagit.tag.bag-info.source-organization";
+    protected static final String OTHER_INFO_MISC = "bag-info-helper-test";
+    protected static final String OTHER_INFO_MISC_CONFIG_KEY = "replicate-bagit.tag.other-info.misc";
 
     /**
      * Default constructor
@@ -99,6 +100,7 @@ public class AbstractDSpaceTest {
             ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
             configurationService.setProperty(SOURCE_ORG_CONFIG_KEY, SOURCE_ORG);
             configurationService.setProperty(ARCH_FMT_KEY, ARCH_FMT);
+            configurationService.setProperty(OTHER_INFO_MISC_CONFIG_KEY, OTHER_INFO_MISC);
         } catch (IOException ex) {
             log.error("Error initializing tests", ex);
             fail("Error initializing tests: " + ex.getMessage());
@@ -125,6 +127,5 @@ public class AbstractDSpaceTest {
 
     public static String getDspaceDir() {
         return System.getProperty("dspace.dir");
-
     }
 }
