@@ -281,7 +281,7 @@ public class METSPacker implements Packer
                 //Check if we found child package references when unpacking this latest package into a DSpaceObject
                 this.childPackageRefs = ((AbstractPackageIngester) sip).getPackageReferences(updatedDso);
             } else if (updatedDso != null && updatedDso.getType() == Constants.ITEM) {
-                this.relPackageRefs = ((AbstractPackageIngester) sip).getRelPackageReferences(updatedDso);
+                // this.relPackageRefs = ((AbstractPackageIngester) sip).getRelPackageReferences(updatedDso);
             }
         } 
         
