@@ -136,7 +136,7 @@
                     <version>1.6</version>
                 </plugin>
 
-                <!-- Unit Testing O) -->
+                <!-- Unit Testing Environment -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
